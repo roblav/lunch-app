@@ -9,6 +9,9 @@ import services.GreetingService
 object FakeMorningGreeter extends GreetingService {
   override def greeting: String = "Good morning!"
 }
+object FakeAfternoonGreeter extends GreetingService {
+  override def greeting: String = "Good afternoon!"
+}
 
 class WelcomeControllerSpec extends PlaySpec with GuiceOneAppPerTest{
 
@@ -38,6 +41,13 @@ class WelcomeControllerSpec extends PlaySpec with GuiceOneAppPerTest{
     val controller = new WelcomeController(FakeMorningGreeter)
     val result = controller.welcome().apply(FakeRequest(GET, "/foo"))
     contentAsString(result) must include ("<h1>Good morning!</h1>")
+    contentAsString(result) must include ("<title>Welcome!</title>")
+  }
+
+  "say good afternoon and have a title" in {
+    val controller = new WelcomeController(FakeAfternoonGreeter)
+    val result = controller.welcome().apply(FakeRequest(GET, "/foo"))
+    contentAsString(result) must include ("<h1>Good afternoon!</h1>")
     contentAsString(result) must include ("<title>Welcome!</title>")
   }
 
