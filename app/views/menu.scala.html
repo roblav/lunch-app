@@ -8,10 +8,12 @@
   @if(sandwiches.isEmpty){
     <p>Too Late! There are no sandwiches left</p>
   } else {
-    <p>sandwiches left</p>
+    <h2>Sandwiches left</h2>
+    <ul>
     @for(sandwich <- sandwiches){
-      <p>@sandwich.name - £@sandwich.price</p>
+      <li>@sandwich.name - £@sandwich.price - @sandwich.description</li>
     }
+    </ul>
   }
 
 }

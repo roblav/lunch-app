@@ -3,21 +3,27 @@ package controllers
 import models.Sandwich
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SandwichService
 
-object FakeNoSandwichService extends SandwichService {
-  override def sandwiches(): List[Sandwich] = List()
-}
+import scala.concurrent.Future
 
-object FakeSingleSandwichService extends SandwichService {
-  val ham = Sandwich("Ham and Cheese", 2.99)
-  val tuna = Sandwich("Tuna", 2.11)
-  override def sandwiches(): List[Sandwich] = List(ham,tuna)
-}
+//default execution context https://www.playframework.com/documentation/2.5.x/ScalaAsync
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+
 
 class SandwichControllerSpec extends PlaySpec with GuiceOneAppPerTest{
+
+  val application = new GuiceApplicationBuilder().
+    overrides(bind[SandwichService].to[IntegrationSandwichService]).
+    build
+
+  // Need to specify Host header to get through AllowedHostsFilter
+  val request = FakeRequest(GET, "/menu").withHeaders("Host" -> "localhost")
+  val home = route(application, request).get
 
   "SandwichController GET" should {
     "return a successful response" in {
@@ -46,6 +52,19 @@ class SandwichControllerSpec extends PlaySpec with GuiceOneAppPerTest{
     contentAsString(result) must include ("£2.11")
   }
 
+
 }
 
+class IntegrationSandwichService extends SandwichService {
+  override def sandwiches(): Future[List[Sandwich]] = Future(List())
+}
 
+object FakeNoSandwichService extends SandwichService {
+  override def sandwiches(): Future[List[Sandwich]] = Future(List())
+}
+
+object FakeSingleSandwichService extends SandwichService {
+  val ham = Sandwich("Ham and Cheese", 2.99, "Ummm...cheesy")
+  val tuna = Sandwich("Tuna", 2.11, "Ummm...fishy")
+  override def sandwiches(): Future[List[Sandwich]] = Future(List(ham,tuna))
+}
