@@ -1,15 +1,16 @@
 package controllers
 
+import javax.inject.Inject
+
 import play.api.mvc.{Action, Controller}
+import services.GreetingService
 
 
-/**
-  * Created by rob on 07/06/17.
-  */
-class WelcomeController extends Controller{
+class WelcomeController @Inject() (greeter: GreetingService) extends Controller{
 
   def welcome() = Action {
-    Ok(views.html.welcome())
+    var greeting = greeter.greeting
+    Ok(views.html.welcome(greeting))
   }
 
 }
