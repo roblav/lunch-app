@@ -1,0 +1,17 @@
+@(sandwiches:List[Sandwich])
+
+@main("Welcome!") {
+  <h1>Sandwich Menu</h1>
+
+  @* List when there are no sandwiches *@
+
+  @if(sandwiches.isEmpty){
+    <p>Too Late! There are no sandwiches left</p>
+  } else {
+    <p>sandwiches left</p>
+    @for(sandwich <- sandwiches){
+      <p>@sandwich.name - £@sandwich.price</p>
+    }
+  }
+
+}

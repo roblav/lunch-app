@@ -20,7 +20,6 @@ class WelcomeControllerSpec extends PlaySpec with GuiceOneAppPerTest{
       val controller = new WelcomeController(FakeMorningGreeter)
       val result = controller.welcome().apply(FakeRequest(GET, "/foo"))
       status(result) mustBe OK
-
     }
   }
 
